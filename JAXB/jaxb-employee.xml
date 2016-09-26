@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<emp id="5">
+    <name>Pesho</name>
+    <age>25</age>
+    <role>developer</role>
+    <gen>male</gen>
+</emp>
