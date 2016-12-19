@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+>
+<h:head>
+    <title>JSF Tutorial!</title>
+    <h:outputStylesheet library="css" name="table-style.css"/>
+</h:head>
+<h:body>
+
+
+    <h2>Employee list</h2>
+    <h:dataTable value="#{employeeMB.employeeList}" var="e"
+                 border="1"
+                 cellpadding="2"
+                 cellspacing="0"
+                 styleClass="employee-table"
+                 headerClass="employee-table-header"
+                 rowClasses="employee-table-odd-row, employee-table-even-row">
+
+        <h1>Employees</h1>
+        <h:column>
+            <!-- column header -->
+            <f:facet name="header">
+                <h:outputText value="First Name"/>
+            </f:facet>
+            <!-- row record -->
+            ${e.firstName}
+
+            <!-- column header -->
+            <f:facet name="header">Last Name</f:facet>
+            <!-- row record -->
+            ${e.lastName}
+
+            <!-- column header -->
+            <f:facet name="header">Salary</f:facet>
+            <!-- row record -->
+            ${e.salary}
+
+        </h:column>
+    </h:dataTable>
+
+    <h:button value="Add Employee" outcome="add-employee"/>
+
+
+</h:body>
+</html>
