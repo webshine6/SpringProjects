@@ -28,7 +28,6 @@ public class FilePermission {
 				System.out.println("File already existed.");
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

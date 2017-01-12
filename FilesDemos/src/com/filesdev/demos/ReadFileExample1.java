@@ -15,7 +15,7 @@ public class ReadFileExample1 {
 		
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
-		
+			
 		try {
 			fileReader = new FileReader(FILENAME);
 			bufferedReader = new BufferedReader(fileReader);
