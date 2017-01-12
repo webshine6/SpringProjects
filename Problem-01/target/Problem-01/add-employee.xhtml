@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+<h:body>
+    <h1>Add or Update Employee</h1>
+
+    <h:form>
+        <h:panelGrid>
+            <span>First name: </span>
+            <h:inputText value="#{employeeMB.employee.firstName}"/>
+        </h:panelGrid>
+
+        <h:panelGrid>
+            <span>Last name: </span>
+            <h:inputText value="#{employeeMB.employee.lastName}"/>
+        </h:panelGrid>
+
+        <h:panelGrid>
+            <span>Salary: </span>
+            <h:inputText value="#{employeeMB.employee.salary}"/>
+        </h:panelGrid>
+
+
+        <h:commandButton value="Submit" action="#{employeeMB.createEmployee()}"/>
+    </h:form>
+
+    <h:button value="Employees List" outcome="list-employees"/>
+
+</h:body>
+</html>
