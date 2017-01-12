@@ -1,0 +1,21 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="helloBean" class="com.springdev.mavenhelloworldexample.beans.HelloWorld">
+		<property name="name" value="Hello World" />
+	</bean>
+
+	<!-- Beans For Output Generator -->
+	<bean id="outputHelper" class="com.springdev.mavenhelloworldexample.beans.OutputHelper">
+		<property name="outputGenerator" ref="CsvOutputGenerator"/>
+	</bean>
+
+	<bean id="CsvOutputGenerator" class="com.springdev.mavenhelloworldexample.beans.CsvOutputGenerator">
+	</bean>		
+
+	<bean id="JsonOutputGenerator" class="com.springdev.mavenhelloworldexample.beans.JsonOutputGenerator">
+	</bean>		
+
+</beans>
