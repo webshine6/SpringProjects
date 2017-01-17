@@ -1,18 +1,21 @@
 package com.springdev.springbootcrud.controllers;
 
 import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,12 +23,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.springdev.springbootcrud.domains.Role;
 import com.springdev.springbootcrud.domains.User;
+import com.springdev.springbootcrud.exceptions.UsernameExistsException;
+import com.springdev.springbootcrud.services.NotificationService;
 import com.springdev.springbootcrud.services.RoleService;
 import com.springdev.springbootcrud.services.UserService;
 
 @Controller
 public class AppController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AppController.class);
+	
 	@Autowired
 	UserService userService;
 	
@@ -33,7 +40,13 @@ public class AppController {
 	RoleService roleService;
 	
 	@Autowired
+	MessageSource messageSource;
+	
+	@Autowired
 	AuthenticationTrustResolver authenticationTrustResolver;
+	
+	@Autowired
+	NotificationService notificationService;
 	
 	/*
 	 * list all existing users.
@@ -51,8 +64,9 @@ public class AppController {
 	}
 	
 	
-	
-	
+	/*
+	 * Show registration form
+	 */
 	@RequestMapping(value = "/registration")
 	public String newUser(Model model) {
 		User user = new User();
@@ -65,18 +79,34 @@ public class AppController {
 	
 	@RequestMapping(value = { "/registration" }, method = RequestMethod.POST)
 	public String saveUser(@Valid User user, BindingResult result,
-			Model model) {
+			Model model, Errors errors) {
 
 		if (result.hasErrors()) {
 			return "registration";
 		}
+		
+		// create a user 
+	    try {
+			userService.saveUser(user);
+		} catch (UsernameExistsException e) {
+			e.printStackTrace();
+			errors.rejectValue("username", null, "This user already exist's in the system.");
+			return "registration";
+		}
+	
+	    // send a notification
+	    try {
+			notificationService.sendNotification(user);
+		} catch (InterruptedException e) {
+			LOGGER.info("Error Sending Email: " + e.getMessage());			
+		}
 
-		userService.saveUser(user);
 
 		model.addAttribute("success", "User " + user.getUsername() + " registered successfully");
 		model.addAttribute("loggedinuser", getPrincipal());
 		return "redirect:/list";
 	}
+
 	
 	/*
 	 * update existing user
@@ -94,13 +124,21 @@ public class AppController {
 	}
 	
 	@RequestMapping(value = "edit-user-{userid}", method = RequestMethod.POST)
-	public String updateUser(@Valid User user, BindingResult result,  @PathVariable("userid") Long userid, Model model) {
+	public String updateUser(@Valid User user, BindingResult result,  @PathVariable("userid") Long userid, Model model, Errors errors) {
 		
 		if (result.hasErrors()) {
 			return "registration";
 		}
 		
-		userService.updateUser(user);
+		try {
+			userService.updateUser(user);
+		} catch (UsernameExistsException e) {
+			e.printStackTrace();
+			errors.rejectValue("username", null, "This user already exist's in the system.");
+			return "registration";
+		}
+		
+		
 		model.addAttribute("success", "User " + user.getUsername() + " updated successfully");
 		model.addAttribute("loggedinuser", getPrincipal());
 		return "success";
@@ -151,8 +189,7 @@ public class AppController {
 	}
 	
 	
-	
-	
+		
 	/**
 	 * returns true if users is already authenticated [logged-in]
 	 */
@@ -161,5 +198,8 @@ public class AppController {
 	    return authenticationTrustResolver.isAnonymous(authentication);
 	}
 
-	
+
+
+
+
 }

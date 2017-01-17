@@ -9,11 +9,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 
 @SpringBootApplication(scanBasePackages = "com.springdev.springbootcrud") //  combination of [shortcut] @EnableAutoConfiguration, @Configuration & @ComponentScan
 @EnableJpaRepositories(basePackages = "com.springdev.springbootcrud")
 @EntityScan(basePackages = "com.springdev.springbootcrud.domains")
+@EnableAsync
 public class WebApplication extends SpringBootServletInitializer {
 
 	@Override

@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.springdev.springbootcrud.domains.User;
+import com.springdev.springbootcrud.exceptions.UsernameExistsException;
 import com.springdev.springbootcrud.repositories.UserRepository;
 
 @Service("userService")
@@ -31,15 +32,23 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void saveUser(User user) {
+	public void saveUser(User user) throws UsernameExistsException {
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		user.setRoles(user.getRoles());
-		userRepository.save(user);
 		
+		if (usernameExists(user.getUsername())) {
+			throw new UsernameExistsException("There is an user with this username: " + user.getUsername());
+		}
+
+		userRepository.save(user);		
 	}
 
 	@Override
-	public void updateUser(User user) {
+	public void updateUser(User user) throws UsernameExistsException {
+		if (usernameExists(user.getUsername())) {
+			throw new UsernameExistsException("There is an user with this username: " + user.getUsername());
+		}
+		
 		saveUser(user);		
 	}
 
@@ -60,7 +69,18 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean isUserExist(User user) {
-		return findById(user.getUserid()) != null;
+		return findByUsername(user.getUsername()) != null;
 	}
+	
+	private boolean usernameExists(String username) {
+		
+		User user = userRepository.findByUsername(username);
+		
+		if (user != null) {
+			return true;
+		}		
+		return false;
+	}
+	
 
 }

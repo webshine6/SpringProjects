@@ -27,7 +27,7 @@ public class User implements Serializable {
 	private Long userid;
 	
 	@NotEmpty @Size(min = 5, max = 10)
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String username;
 	
 	@NotEmpty
